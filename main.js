@@ -166,6 +166,52 @@ class Tree {
     traverse(callback, node);
     return array;
   }
+  nodeHeight(node) {
+    if (node === null) return 0;
+    else {
+      let l = this.nodeHeight(node.leftE);
+      let r = this.nodeHeight(node.rightE);
+      if (l > r) return l + 1;
+      else return r + 1;
+    }
+  }
+  nodeDepth(node) {
+    if (node === null) return 0;
+    let tmp = this.root;
+    let depth = 0;
+    while (node.value !== tmp.value) {
+      if (node.value > tmp.value) {
+        tmp = tmp.rightE;
+        depth++;
+      } else {
+        tmp = tmp.leftE;
+        depth++;
+      }
+    }
+    return depth;
+  }
+  isBalanced() {
+    let traverse = (node) => {
+      if (node == null) return { isBalanced: true, height: -1 };
+
+      let left = traverse(node.leftE);
+      let right = traverse(node.rightE);
+
+      let isBalanced =
+        left.isBalanced &&
+        right.isBalanced &&
+        Math.abs(left.height - right.height) <= 1;
+      let height = Math.max(left.height, right.height) + 1;
+
+      return { isBalanced: isBalanced, height: height };
+    };
+
+    return traverse(this.root).isBalanced;
+  }
+  rebalance() {
+    let array = this.inOrder();
+    this.root = this.buildTree(array);
+  }
 }
 
 const prettyPrint = (node, prefix = "", isLeft = true) => {
@@ -185,5 +231,10 @@ const arr = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
 let tree = new Tree(arr);
 
 console.log(tree.levelOrder());
+tree.deleteNode(this.root, 4);
+tree.deleteNode(this.root, 5);
 prettyPrint(tree.root);
-console.log(tree.postOrder());
+console.log(tree.isBalanced());
+tree.rebalance();
+prettyPrint(tree.root);
+console.log(tree.isBalanced());
